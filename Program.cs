@@ -32,7 +32,7 @@ string[] cpfExamples = {
     "  35321        351 31351 351  ",
     " 9873348",
     "351aasdf351968.. 8354   ",
-    "375.719.958.84"
+    "755.805.273.49"
 };
 
 Console.WriteLine("Examples of CPF's:");
@@ -41,4 +41,23 @@ for (int i = 0, j = 1; i < cpfExamples.Length; i++, j++)
     string numWithZeroOnLeft = j.ToString().PadLeft(2, '0');
     string formattedCpf = BetterString.FormatCpf(cpfExamples[i]);
     Console.WriteLine($"CPF {numWithZeroOnLeft}: {formattedCpf}.");
+}
+
+Console.WriteLine("\n\n----------------------------------------------------------------\n\n");
+
+string[] cnpjExamples = {
+    "12345678909",
+    " 46    379 400.0001.50  ",
+    " 9873348",
+    " 11 273 485 0002 94",
+    "351aasdf351968.. 8354   ",
+    "755.805.273.49"
+};
+
+Console.WriteLine("Examples of CNPJ's:");
+for (int i = 0, j = 1; i < cnpjExamples.Length; i++, j++)
+{
+    string numWithZeroOnLeft = j.ToString().PadLeft(2, '0');
+    string formattedCnpj = BetterString.FormatCnpj(cnpjExamples[i]);
+    Console.WriteLine($"CNPJ {numWithZeroOnLeft}: {formattedCnpj}.");
 }

@@ -72,5 +72,25 @@ namespace my_personal_csharp.Models
             
             return formattedCpf;
         }
+
+        public static string FormatCnpj(string notFormattedCnpj)
+        {
+            string cnpjWithoutExtraSpaces = RemoveSpaces(notFormattedCnpj);
+            string cnpjAux = String.Empty;
+            string formattedCnpj = String.Empty;
+
+            for (int i = cnpjWithoutExtraSpaces.Length-1, j = 0; i >= 0 && j < 14; i--) {
+                int num;
+                if (int.TryParse(cnpjWithoutExtraSpaces[i].ToString(), out num)) {
+                    cnpjAux = cnpjWithoutExtraSpaces[i].ToString() + cnpjAux;
+                    j++;
+                }
+            }
+
+            cnpjAux = cnpjAux.PadLeft(14, '0');
+            formattedCnpj = cnpjAux.Substring(0, 2) + '.' + cnpjAux.Substring(2, 3) + '.' + cnpjAux.Substring(5, 3) + '/' + cnpjAux.Substring(8, 4) + '-' + cnpjAux.Substring(12);
+            
+            return formattedCnpj;
+        }
     }
 }
