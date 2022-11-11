@@ -4,10 +4,16 @@ namespace my_personal_csharp.Models
 {
     public static class BetterString
     {
+        private static string RemoveSpaces(string strToRemove)
+        {
+            return Regex.Replace(strToRemove.Trim(), @"\s+", " ");
+        }
+
         public static string FormatName(string notFormattedName)
         {
             string formattedName = String.Empty;
-            string nameWithoutExtraSpaces = Regex.Replace(notFormattedName.Trim(), @"\s+", " ");
+            // string nameWithoutExtraSpaces = Regex.Replace(notFormattedName.Trim(), @"\s+", " ");
+            string nameWithoutExtraSpaces = RemoveSpaces(notFormattedName);
             var regexToCompare = @"(mac|mc)([^aeiouAEIOU]{1})";
             string[] arrNames = nameWithoutExtraSpaces.Split(" ");
             string[] artigosEPreposicoes = {
@@ -45,6 +51,26 @@ namespace my_personal_csharp.Models
             }
             
             return formattedName;
+        }
+
+        public static string FormatCpf(string notFormattedCpf)
+        {
+            string cpfWithoutExtraSpaces = RemoveSpaces(notFormattedCpf);
+            string cpfAux = String.Empty;
+            string formattedCpf = String.Empty;
+
+            for (int i = cpfWithoutExtraSpaces.Length-1, j = 0; i >= 0 && j < 11; i--) {
+                int num;
+                if (int.TryParse(cpfWithoutExtraSpaces[i].ToString(), out num)) {
+                    cpfAux = cpfWithoutExtraSpaces[i].ToString() + cpfAux;
+                    j++;
+                }
+            }
+
+            cpfAux = cpfAux.PadLeft(11, '0');
+            formattedCpf = cpfAux.Substring(0, 3) + '.' + cpfAux.Substring(3, 3) + '.' + cpfAux.Substring(6, 3) + '-' + cpfAux.Substring(9);
+            
+            return formattedCpf;
         }
     }
 }
