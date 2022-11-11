@@ -9,11 +9,13 @@ string[] nameExamples = {
     " roBERt o'doNNElL ",
     "affonso   deLLA    mÔnica    ",
     "randall mccoy",
+    "james labrie",
     "   BRUCE     MCLAREN  ",
+    "  lebron james ",
     "JIMMY maccarthy   ",
     "  MARCELLO     DA   ROCHA    MACARTHY   ",
     "charles de gaulle",
-    "   leonardo  di caprio"
+    "   leonardo  dicaprio"
 };
 
 Console.WriteLine("Examples of names:");

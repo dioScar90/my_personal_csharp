@@ -15,13 +15,16 @@ namespace my_personal_csharp.Models
             string formattedName = String.Empty;
             string nameWithoutExtraSpaces = RemoveSpaces(notFormattedName);
             string[] arrNames = nameWithoutExtraSpaces.Split(" ");
-            string[] artigosEPreposicoes = {
-                "di", "da", "das", "do", "dos", "de", "e", "von", "van", "le", "la", "du", "des", "del", "della", "der"
+            string[] specificNames = {
+                "dicaprio", "distefano", "lebron", "labrie"
+            };
+            string[] prepositions = {
+                "di", "da", "das", "do", "dos", "de", "e", "von", "van", "le", "la", "du", "des", "del", "della", "der", "al"
             };
 
             foreach(var name in arrNames)
             {
-                if (arrNames.First() != name && artigosEPreposicoes.Contains(name.ToLower()))
+                if (arrNames.First() != name && prepositions.Contains(name.ToLower()))
                 {
                     formattedName += name.ToLower();
                 }
@@ -30,6 +33,11 @@ namespace my_personal_csharp.Models
                     if (name.Substring(0, 2).ToUpper() == "O'")
                     {
                         formattedName += name.Substring(0, 3).ToUpper() + name.Substring(3).ToLower();
+                    }
+                    else if (specificNames.Contains(name.ToLower()))
+                    {
+                        char[] chars = { char.ToUpper(name[0]), char.ToLower(name[1]), char.ToUpper(name[2]) };
+                        formattedName += new string(chars) + name.Substring(3).ToLower();
                     }
                     else if (name.Length > 3 && Regex.IsMatch(name.Substring(0, 3).ToLower(), REGEX_TO_COMPARE))
                     {
