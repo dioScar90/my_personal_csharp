@@ -4,17 +4,16 @@ namespace my_personal_csharp.Models
 {
     public static class BetterString
     {
-        private static string RemoveSpaces(string strToRemove)
+        private static string RemoveSpaces(string strToRemoveSpaces)
         {
-            return Regex.Replace(strToRemove.Trim(), @"\s+", " ");
+            return Regex.Replace(strToRemoveSpaces.Trim(), @"\s+", " ");
         }
 
         public static string FormatName(string notFormattedName)
         {
+            const string REGEX_TO_COMPARE = @"(mac|mc)([^aeiouAEIOU]{1})";
             string formattedName = String.Empty;
-            // string nameWithoutExtraSpaces = Regex.Replace(notFormattedName.Trim(), @"\s+", " ");
             string nameWithoutExtraSpaces = RemoveSpaces(notFormattedName);
-            var regexToCompare = @"(mac|mc)([^aeiouAEIOU]{1})";
             string[] arrNames = nameWithoutExtraSpaces.Split(" ");
             string[] artigosEPreposicoes = {
                 "di", "da", "das", "do", "dos", "de", "e", "von", "van", "le", "la", "du", "des", "del", "della", "der"
@@ -32,12 +31,12 @@ namespace my_personal_csharp.Models
                     {
                         formattedName += name.Substring(0, 3).ToUpper() + name.Substring(3).ToLower();
                     }
-                    else if (name.Length > 3 && Regex.IsMatch(name.Substring(0, 3).ToLower(), regexToCompare))
+                    else if (name.Length > 3 && Regex.IsMatch(name.Substring(0, 3).ToLower(), REGEX_TO_COMPARE))
                     {
                         char[] chars = { char.ToUpper(name[0]), char.ToLower(name[1]), char.ToUpper(name[2]) };
                         formattedName += new string(chars) + name.Substring(3).ToLower();
                     }
-                    else if (name.Length > 4 && Regex.IsMatch(name.Substring(0, 4).ToLower(), regexToCompare))
+                    else if (name.Length > 4 && Regex.IsMatch(name.Substring(0, 4).ToLower(), REGEX_TO_COMPARE))
                     {
                         formattedName += char.ToUpper(name[0]) + name.Substring(1, 2).ToLower() + char.ToUpper(name[3]) + name.Substring(4).ToLower();
                     }
