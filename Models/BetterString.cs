@@ -4,16 +4,16 @@ namespace my_personal_csharp.Models
 {
     public static class BetterString
     {
-        private static string RemoveSpaces(string strToRemoveSpaces)
+        private static string RemoveSpaces(this string strToRemoveSpaces)
         {
             return Regex.Replace(strToRemoveSpaces.Trim(), @"\s+", " ");
         }
 
-        public static string FormatName(string notFormattedName)
+        public static string FormatName(this string notFormattedName)
         {
             const string REGEX_TO_COMPARE = @"(mac|mc)([^aeiouAEIOU]{1})";
             string formattedName = String.Empty;
-            string nameWithoutExtraSpaces = RemoveSpaces(notFormattedName);
+            string nameWithoutExtraSpaces = notFormattedName.RemoveSpaces();
             string[] arrNames = nameWithoutExtraSpaces.Split(" ");
             string[] specificNames = {
                 "dicaprio", "distefano", "lebron", "labrie"
@@ -60,9 +60,9 @@ namespace my_personal_csharp.Models
             return formattedName;
         }
 
-        public static string FormatCpf(string notFormattedCpf)
+        public static string FormatCpf(this string notFormattedCpf)
         {
-            string cpfWithoutExtraSpaces = RemoveSpaces(notFormattedCpf);
+            string cpfWithoutExtraSpaces = notFormattedCpf.RemoveSpaces();
             string cpfAux = String.Empty;
             string formattedCpf = String.Empty;
 
@@ -80,9 +80,9 @@ namespace my_personal_csharp.Models
             return formattedCpf;
         }
 
-        public static string FormatCnpj(string notFormattedCnpj)
+        public static string FormatCnpj(this string notFormattedCnpj)
         {
-            string cnpjWithoutExtraSpaces = RemoveSpaces(notFormattedCnpj);
+            string cnpjWithoutExtraSpaces = notFormattedCnpj.RemoveSpaces();
             string cnpjAux = String.Empty;
             string formattedCnpj = String.Empty;
 

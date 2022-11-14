@@ -22,7 +22,7 @@ Console.WriteLine("Examples of names:");
 for (int i = 0, j = 1; i < nameExamples.Length; i++, j++)
 {
     string numWithZeroOnLeft = j.ToString().PadLeft(2, '0');
-    string formattedName = BetterString.FormatName(nameExamples[i]);
+    string formattedName = nameExamples[i].FormatName();
     Console.WriteLine($"Name {numWithZeroOnLeft}: {formattedName}.");
 }
 
@@ -41,7 +41,7 @@ Console.WriteLine("Examples of CPF's:");
 for (int i = 0, j = 1; i < cpfExamples.Length; i++, j++)
 {
     string numWithZeroOnLeft = j.ToString().PadLeft(2, '0');
-    string formattedCpf = BetterString.FormatCpf(cpfExamples[i]);
+    string formattedCpf = cpfExamples[i].FormatCpf();
     Console.WriteLine($"CPF {numWithZeroOnLeft}: {formattedCpf}.");
 }
 
@@ -60,6 +60,6 @@ Console.WriteLine("Examples of CNPJ's:");
 for (int i = 0, j = 1; i < cnpjExamples.Length; i++, j++)
 {
     string numWithZeroOnLeft = j.ToString().PadLeft(2, '0');
-    string formattedCnpj = BetterString.FormatCnpj(cnpjExamples[i]);
+    string formattedCnpj = cnpjExamples[i].FormatCnpj();
     Console.WriteLine($"CNPJ {numWithZeroOnLeft}: {formattedCnpj}.");
 }
