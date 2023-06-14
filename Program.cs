@@ -63,3 +63,10 @@ for (int i = 0, j = 1; i < cnpjExamples.Length; i++, j++)
     string formattedCnpj = cnpjExamples[i].FormatCnpj();
     Console.WriteLine($"CNPJ {numWithZeroOnLeft}: {formattedCnpj}.");
 }
+
+Console.WriteLine("\n\n----------------------------------------------------------------\n\n");
+
+string[] currently = new string[2];
+currently.Append("aqui").ToArray();
+currently.Append("ali").ToArray();
+Console.WriteLine(currently[1]);

@@ -1,103 +1,99 @@
 using System.Text.RegularExpressions;
 
-namespace my_personal_csharp.Models
+namespace my_personal_csharp.Models;
+
+public static class BetterString
 {
-    public static class BetterString
+    private static string REGEX_TO_COMPARE = @"(mac|mc)([^aeiouAEIOU]{1})";
+    private static readonly string[] specificNames = { "dicaprio", "distefano", "lebron", "labrie" };
+    private static readonly string[] prepositions =
+        { "di", "da", "das", "do", "dos", "de", "e", "von", "van", "le", "la", "du", "des", "del", "della", "der", "al" };
+
+    private static string RemoveSpaces(this string inputString) => Regex.Replace(inputString.Trim(), @"\s+", " ");
+    private static string GetOnlyNumbers(this string inputString) => Regex.Replace(inputString, "[^0-9]", "");
+    private static string GetFormattedCpf(this string inputString) =>
+        inputString.Substring(0, 3) + '.' + inputString.Substring(3, 3) + '.' + inputString.Substring(6, 3) + '-' + inputString.Substring(9);
+    private static string GetFormattedCnpj(this string inputString) =>
+        inputString.Substring(0, 2) + '.' + inputString.Substring(2, 3) + '.' + inputString.Substring(5, 3) + '/' + inputString.Substring(8, 4) + '-' + inputString.Substring(12);
+
+    private static bool IsPreposition(List<string> acc, string curr) => acc.Any() && prepositions.Contains(curr.ToLower());
+    private static bool StartsWithOApostrophe(string curr) => curr.Length > 1 && curr.Substring(0, 2).ToUpper() == "O'";
+    private static bool IsOneOFSpecificNames(string curr) => specificNames.Contains(curr.ToLower());
+    private static bool StartsWithMc(string curr) => curr.Length > 3 && Regex.IsMatch(curr.Substring(0, 3).ToLower(), REGEX_TO_COMPARE);
+    private static bool StartsWithMac(string curr) => curr.Length > 4 && Regex.IsMatch(curr.Substring(0, 4).ToLower(), REGEX_TO_COMPARE);
+
+    public static string FormatName(this string notFormattedName)
     {
-        private static string RemoveSpaces(this string strToRemoveSpaces)
-        {
-            return Regex.Replace(strToRemoveSpaces.Trim(), @"\s+", " ");
-        }
+        string nameWithoutExtraSpaces = notFormattedName.RemoveSpaces();
+        string[] arrNames = nameWithoutExtraSpaces.Split(" ");
 
-        public static string FormatName(this string notFormattedName)
-        {
-            const string REGEX_TO_COMPARE = @"(mac|mc)([^aeiouAEIOU]{1})";
-            string formattedName = String.Empty;
-            string nameWithoutExtraSpaces = notFormattedName.RemoveSpaces();
-            string[] arrNames = nameWithoutExtraSpaces.Split(" ");
-            string[] specificNames = {
-                "dicaprio", "distefano", "lebron", "labrie"
-            };
-            string[] prepositions = {
-                "di", "da", "das", "do", "dos", "de", "e", "von", "van", "le", "la", "du", "des", "del", "della", "der", "al"
-            };
-
-            foreach(var name in arrNames)
+        string formattedName = arrNames.Aggregate(new List<string>(), (acc, curr) => {
+            if (IsPreposition(acc, curr))
             {
-                if (arrNames.First() != name && prepositions.Contains(name.ToLower()))
-                {
-                    formattedName += name.ToLower();
-                }
-                else
-                {
-                    if (name.Substring(0, 2).ToUpper() == "O'")
-                    {
-                        formattedName += name.Substring(0, 3).ToUpper() + name.Substring(3).ToLower();
-                    }
-                    else if (specificNames.Contains(name.ToLower()))
-                    {
-                        char[] chars = { char.ToUpper(name[0]), char.ToLower(name[1]), char.ToUpper(name[2]) };
-                        formattedName += new string(chars) + name.Substring(3).ToLower();
-                    }
-                    else if (name.Length > 3 && Regex.IsMatch(name.Substring(0, 3).ToLower(), REGEX_TO_COMPARE))
-                    {
-                        char[] chars = { char.ToUpper(name[0]), char.ToLower(name[1]), char.ToUpper(name[2]) };
-                        formattedName += new string(chars) + name.Substring(3).ToLower();
-                    }
-                    else if (name.Length > 4 && Regex.IsMatch(name.Substring(0, 4).ToLower(), REGEX_TO_COMPARE))
-                    {
-                        formattedName += char.ToUpper(name[0]) + name.Substring(1, 2).ToLower() + char.ToUpper(name[3]) + name.Substring(4).ToLower();
-                    }
-                    else
-                    {
-                        formattedName += char.ToUpper(name[0]) + name.Substring(1).ToLower();
-                    }
-                }
-
-                formattedName += arrNames.Last() == name ? "" : " ";
-            }
-            
-            return formattedName;
-        }
-
-        public static string FormatCpf(this string notFormattedCpf)
-        {
-            string cpfWithoutExtraSpaces = notFormattedCpf.RemoveSpaces();
-            string cpfAux = String.Empty;
-            string formattedCpf = String.Empty;
-
-            for (int i = cpfWithoutExtraSpaces.Length-1, j = 0; i >= 0 && j < 11; i--) {
-                int num;
-                if (int.TryParse(cpfWithoutExtraSpaces[i].ToString(), out num)) {
-                    cpfAux = cpfWithoutExtraSpaces[i].ToString() + cpfAux;
-                    j++;
-                }
+                string preposition = curr.ToLower();
+                acc.Add(preposition);
+                return acc;
             }
 
-            cpfAux = cpfAux.PadLeft(11, '0');
-            formattedCpf = cpfAux.Substring(0, 3) + '.' + cpfAux.Substring(3, 3) + '.' + cpfAux.Substring(6, 3) + '-' + cpfAux.Substring(9);
-            
-            return formattedCpf;
-        }
-
-        public static string FormatCnpj(this string notFormattedCnpj)
-        {
-            string cnpjWithoutExtraSpaces = notFormattedCnpj.RemoveSpaces();
-            string cnpjAux = String.Empty;
-            string formattedCnpj = String.Empty;
-
-            for (int i = cnpjWithoutExtraSpaces.Length-1, j = 0; i >= 0 && j < 14; i--) {
-                int num;
-                if (int.TryParse(cnpjWithoutExtraSpaces[i].ToString(), out num)) {
-                    cnpjAux = cnpjWithoutExtraSpaces[i].ToString() + cnpjAux;
-                    j++;
-                }
+            if (StartsWithOApostrophe(curr))
+            {
+                string oApostrophe = curr.Substring(0, 3).ToUpper() + curr.Substring(3).ToLower();
+                acc.Add(oApostrophe);
+                return acc;
             }
 
-            cnpjAux = cnpjAux.PadLeft(14, '0');
-            formattedCnpj = cnpjAux.Substring(0, 2) + '.' + cnpjAux.Substring(2, 3) + '.' + cnpjAux.Substring(5, 3) + '/' + cnpjAux.Substring(8, 4) + '-' + cnpjAux.Substring(12);
+            if (IsOneOFSpecificNames(curr))
+            {
+                char[] chars = { char.ToUpper(curr[0]), char.ToLower(curr[1]), char.ToUpper(curr[2]) };
+                string specific = new string(chars) + curr.Substring(3).ToLower();
+                acc.Add(specific);
+                return acc;
+            }
+
+            if (StartsWithMc(curr))
+            {
+                char[] chars = { char.ToUpper(curr[0]), char.ToLower(curr[1]), char.ToUpper(curr[2]) };
+                string withMc = new string(chars) + curr.Substring(3).ToLower();
+                acc.Add(withMc);
+                return acc;
+            }
+
+            if (StartsWithMac(curr))
+            {
+                string withMac = char.ToUpper(curr[0]) + curr.Substring(1, 2).ToLower() + char.ToUpper(curr[3]) + curr.Substring(4).ToLower();
+                acc.Add(withMac);
+                return acc;
+            }
             
-            return formattedCnpj;
-        }
+            string elseString = char.ToUpper(curr[0]) + curr.Substring(1).ToLower();
+            acc.Add(elseString);
+            return acc;
+        }, result => string.Join(' ', result));
+        
+        return formattedName;
+    }
+
+    private static string GetDocNumbersWithZeros(string inputValue, int maxLength)
+    {
+        string onlyNumbers = inputValue.GetOnlyNumbers();
+
+        if (onlyNumbers.Length > maxLength)
+            onlyNumbers = onlyNumbers.Substring(onlyNumbers.Length - maxLength);
+
+        return onlyNumbers.PadLeft(maxLength, '0');
+    }
+
+    public static string FormatCpf(this string notFormattedCpf)
+    {
+        string numbersWithZeros = GetDocNumbersWithZeros(notFormattedCpf, 11);
+        string formattedCpf = numbersWithZeros.GetFormattedCpf();
+        return formattedCpf;
+    }
+
+    public static string FormatCnpj(this string notFormattedCnpj)
+    {
+        string numbersWithZeros = GetDocNumbersWithZeros(notFormattedCnpj, 14);
+        string formattedCnpj = numbersWithZeros.GetFormattedCnpj();
+        return formattedCnpj;
     }
 }
