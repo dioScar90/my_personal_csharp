@@ -5,6 +5,10 @@ namespace my_personal_csharp.Models;
 public static class BetterString
 {
     private static string REGEX_TO_COMPARE = @"(mac|mc)([^aeiouAEIOU]{1})";
+    private static string cpfPattern = @"(\d{3})(\d{3})(\d{3})(\d{2})";
+    private static string cpfReplacement = "$1.$2.$3-$4";
+    private static string cnpjPattern = @"(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})";
+    private static string cnpjReplacement = "$1.$2.$3/$4-$5";
     private static readonly string[] specificNames = { "dicaprio", "distefano", "lebron", "labrie" };
     private static readonly string[] prepositions =
         { "di", "da", "das", "do", "dos", "de", "e", "von", "van", "le", "la", "du", "des", "del", "della", "der", "al" };
@@ -83,17 +87,19 @@ public static class BetterString
         return onlyNumbers.PadLeft(maxLength, '0');
     }
 
+    private static string ReplaceDocument(string input, string pattern, string replacement) => Regex.Replace(input, pattern, replacement);
+
     public static string FormatCpf(this string notFormattedCpf)
     {
         string numbersWithZeros = GetDocNumbersWithZeros(notFormattedCpf, 11);
-        string formattedCpf = numbersWithZeros.GetFormattedCpf();
+        string formattedCpf = ReplaceDocument(numbersWithZeros, cpfPattern, cpfReplacement);
         return formattedCpf;
     }
 
     public static string FormatCnpj(this string notFormattedCnpj)
     {
         string numbersWithZeros = GetDocNumbersWithZeros(notFormattedCnpj, 14);
-        string formattedCnpj = numbersWithZeros.GetFormattedCnpj();
+        string formattedCnpj = ReplaceDocument(numbersWithZeros, cnpjPattern, cnpjReplacement);
         return formattedCnpj;
     }
 }

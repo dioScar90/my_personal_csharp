@@ -1,4 +1,5 @@
 ﻿using my_personal_csharp.Models;
+using System.Text.RegularExpressions;
 
 string[] nameExamples = {
     " vincent VAN gogh",
@@ -66,7 +67,3 @@ for (int i = 0, j = 1; i < cnpjExamples.Length; i++, j++)
 
 Console.WriteLine("\n\n----------------------------------------------------------------\n\n");
 
-string[] currently = new string[2];
-currently.Append("aqui").ToArray();
-currently.Append("ali").ToArray();
-Console.WriteLine(currently[1]);
