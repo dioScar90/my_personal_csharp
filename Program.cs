@@ -1,5 +1,4 @@
 ﻿using my_personal_csharp.Models;
-using System.Text.RegularExpressions;
 
 string[] nameExamples = {
     " vincent VAN gogh",
@@ -7,7 +6,7 @@ string[] nameExamples = {
     "DIOGO L. SCARMAGNANI",
     " edwin     VAN DER SAR     ",
     " luiz philippe de orleans e bragança",
-    " roBERt o'doNNElL ",
+    " roBERt o’doNNElL ",
     "affonso   deLLA    mÔnica    ",
     "randall mccoy",
     "james labrie",
@@ -20,11 +19,11 @@ string[] nameExamples = {
 };
 
 Console.WriteLine("Examples of names:");
-for (int i = 0, j = 1; i < nameExamples.Length; i++, j++)
+foreach (var (position, name) in nameExamples.Select((item, i) => (++i, item)))
 {
-    string numWithZeroOnLeft = j.ToString().PadLeft(2, '0');
-    string formattedName = nameExamples[i].FormatName();
-    Console.WriteLine($"Name {numWithZeroOnLeft}: {formattedName}.");
+    string idx = position.ToString().PadLeft(2, '0');
+    string formattedName = name.FormatName();
+    Console.WriteLine($"Name #{idx}: {formattedName}.");
 }
 
 Console.WriteLine("\n\n----------------------------------------------------------------\n\n");
@@ -39,11 +38,11 @@ string[] cpfExamples = {
 };
 
 Console.WriteLine("Examples of CPF's:");
-for (int i = 0, j = 1; i < cpfExamples.Length; i++, j++)
+foreach (var (position, cpf) in cpfExamples.Select((item, i) => (++i, item)))
 {
-    string numWithZeroOnLeft = j.ToString().PadLeft(2, '0');
-    string formattedCpf = cpfExamples[i].FormatCpf();
-    Console.WriteLine($"CPF {numWithZeroOnLeft}: {formattedCpf}.");
+    string idx = position.ToString().PadLeft(2, '0');
+    string formattedCpf = cpf.FormatCpf();
+    Console.WriteLine($"CPF #{idx}: {formattedCpf}.");
 }
 
 Console.WriteLine("\n\n----------------------------------------------------------------\n\n");
@@ -58,11 +57,11 @@ string[] cnpjExamples = {
 };
 
 Console.WriteLine("Examples of CNPJ's:");
-for (int i = 0, j = 1; i < cnpjExamples.Length; i++, j++)
+foreach (var (position, cnpj) in cnpjExamples.Select((item, i) => (++i, item)))
 {
-    string numWithZeroOnLeft = j.ToString().PadLeft(2, '0');
-    string formattedCnpj = cnpjExamples[i].FormatCnpj();
-    Console.WriteLine($"CNPJ {numWithZeroOnLeft}: {formattedCnpj}.");
+    string idx = position.ToString().PadLeft(2, '0');
+    string formattedCnpj = cnpj.FormatCnpj();
+    Console.WriteLine($"CNPJ #{idx}: {formattedCnpj}.");
 }
 
 Console.WriteLine("\n\n----------------------------------------------------------------\n\n");

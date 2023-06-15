@@ -20,7 +20,7 @@ public static class BetterString
 
     private static string GetFormattedName(string item, int index)
     {
-        if (index == 0 && IsPreposition(item))
+        if (index > 0 && IsPreposition(item))
             return item.ToLower();
         
         if (StartsWithOApostrophe(item))
