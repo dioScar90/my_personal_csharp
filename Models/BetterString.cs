@@ -4,77 +4,45 @@ namespace my_personal_csharp.Models;
 
 public static class BetterString
 {
-    private static string REGEX_TO_COMPARE = @"(mac|mc)([^aeiouAEIOU]{1})";
-    private static string cpfPattern = @"(\d{3})(\d{3})(\d{3})(\d{2})";
-    private static string cpfReplacement = "$1.$2.$3-$4";
-    private static string cnpjPattern = @"(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})";
-    private static string cnpjReplacement = "$1.$2.$3/$4-$5";
+    private static readonly string mcOrMacPattern = @"(mac|mc)([^aeiouAEIOU]{1})";
     private static readonly string[] specificNames = { "dicaprio", "distefano", "lebron", "labrie" };
     private static readonly string[] prepositions =
         { "di", "da", "das", "do", "dos", "de", "e", "von", "van", "le", "la", "du", "des", "del", "della", "der", "al" };
 
-    private static string RemoveSpaces(this string inputString) => Regex.Replace(inputString.Trim(), @"\s+", " ");
+    private static string RemoveExtraSpaces(this string inputString) => Regex.Replace(inputString.Trim(), @"\s+", " ");
     private static string GetOnlyNumbers(this string inputString) => Regex.Replace(inputString, "[^0-9]", "");
-    private static string GetFormattedCpf(this string inputString) =>
-        inputString.Substring(0, 3) + '.' + inputString.Substring(3, 3) + '.' + inputString.Substring(6, 3) + '-' + inputString.Substring(9);
-    private static string GetFormattedCnpj(this string inputString) =>
-        inputString.Substring(0, 2) + '.' + inputString.Substring(2, 3) + '.' + inputString.Substring(5, 3) + '/' + inputString.Substring(8, 4) + '-' + inputString.Substring(12);
+    
+    private static bool IsPreposition(string value) => prepositions.Contains(value.ToLower());
+    private static bool StartsWithOApostrophe(string value) => value.Length > 1 && new[] { "O'", "O’" }.Contains(value.Substring(0, 2).ToUpper());
+    private static bool IsOneOFSpecificNames(string value) => specificNames.Contains(value.ToLower());
+    private static bool StartsWithMcOrMac(string value, int min) =>
+        value.Length > min && Regex.IsMatch(value.Substring(0, min).ToLower(), mcOrMacPattern);
 
-    private static bool IsPreposition(List<string> acc, string curr) => acc.Any() && prepositions.Contains(curr.ToLower());
-    private static bool StartsWithOApostrophe(string curr) => curr.Length > 1 && curr.Substring(0, 2).ToUpper() == "O'";
-    private static bool IsOneOFSpecificNames(string curr) => specificNames.Contains(curr.ToLower());
-    private static bool StartsWithMc(string curr) => curr.Length > 3 && Regex.IsMatch(curr.Substring(0, 3).ToLower(), REGEX_TO_COMPARE);
-    private static bool StartsWithMac(string curr) => curr.Length > 4 && Regex.IsMatch(curr.Substring(0, 4).ToLower(), REGEX_TO_COMPARE);
-
-    public static string FormatName(this string notFormattedName)
+    private static string GetFormattedName(string item, int index)
     {
-        string nameWithoutExtraSpaces = notFormattedName.RemoveSpaces();
-        string[] arrNames = nameWithoutExtraSpaces.Split(" ");
-
-        string formattedName = arrNames.Aggregate(new List<string>(), (acc, curr) => {
-            if (IsPreposition(acc, curr))
-            {
-                string preposition = curr.ToLower();
-                acc.Add(preposition);
-                return acc;
-            }
-
-            if (StartsWithOApostrophe(curr))
-            {
-                string oApostrophe = curr.Substring(0, 3).ToUpper() + curr.Substring(3).ToLower();
-                acc.Add(oApostrophe);
-                return acc;
-            }
-
-            if (IsOneOFSpecificNames(curr))
-            {
-                char[] chars = { char.ToUpper(curr[0]), char.ToLower(curr[1]), char.ToUpper(curr[2]) };
-                string specific = new string(chars) + curr.Substring(3).ToLower();
-                acc.Add(specific);
-                return acc;
-            }
-
-            if (StartsWithMc(curr))
-            {
-                char[] chars = { char.ToUpper(curr[0]), char.ToLower(curr[1]), char.ToUpper(curr[2]) };
-                string withMc = new string(chars) + curr.Substring(3).ToLower();
-                acc.Add(withMc);
-                return acc;
-            }
-
-            if (StartsWithMac(curr))
-            {
-                string withMac = char.ToUpper(curr[0]) + curr.Substring(1, 2).ToLower() + char.ToUpper(curr[3]) + curr.Substring(4).ToLower();
-                acc.Add(withMac);
-                return acc;
-            }
-            
-            string elseString = char.ToUpper(curr[0]) + curr.Substring(1).ToLower();
-            acc.Add(elseString);
-            return acc;
-        }, result => string.Join(' ', result));
+        if (index == 0 && IsPreposition(item))
+            return item.ToLower();
         
-        return formattedName;
+        if (StartsWithOApostrophe(item))
+            return item.Substring(0, 3).ToUpper() + item.Substring(3).ToLower();
+        
+        if (IsOneOFSpecificNames(item) || StartsWithMcOrMac(item, 3))
+            return new string(new[] { char.ToUpper(item[0]), char.ToLower(item[1]), char.ToUpper(item[2]) }) + item.Substring(3).ToLower();
+        
+        if (StartsWithMcOrMac(item, 4))
+            return char.ToUpper(item[0]) + item.Substring(1, 2).ToLower() + char.ToUpper(item[3]) + item.Substring(4).ToLower();
+            
+        return char.ToUpper(item[0]) + item.Substring(1).ToLower();
+    }
+
+    public static string FormatName(this string inputValue)
+    {
+        string nameWithoutExtraSpaces = inputValue.RemoveExtraSpaces();
+
+        string[] arrNames = nameWithoutExtraSpaces.Split(' ');
+        string[] arrFormattedNames = arrNames.Select(GetFormattedName).ToArray();
+
+        return string.Join(' ', arrFormattedNames);
     }
 
     private static string GetDocNumbersWithZeros(string inputValue, int maxLength)
@@ -91,15 +59,23 @@ public static class BetterString
 
     public static string FormatCpf(this string notFormattedCpf)
     {
+        string cpfPattern = @"(\d{3})(\d{3})(\d{3})(\d{2})";
+        string cpfReplacement = "$1.$2.$3-$4";
+
         string numbersWithZeros = GetDocNumbersWithZeros(notFormattedCpf, 11);
         string formattedCpf = ReplaceDocument(numbersWithZeros, cpfPattern, cpfReplacement);
+
         return formattedCpf;
     }
 
     public static string FormatCnpj(this string notFormattedCnpj)
     {
+        string cnpjPattern = @"(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})";
+        string cnpjReplacement = "$1.$2.$3/$4-$5";
+
         string numbersWithZeros = GetDocNumbersWithZeros(notFormattedCnpj, 14);
         string formattedCnpj = ReplaceDocument(numbersWithZeros, cnpjPattern, cnpjReplacement);
+
         return formattedCnpj;
     }
 }
