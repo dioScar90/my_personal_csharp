@@ -2,21 +2,34 @@ using System.Text.RegularExpressions;
 
 namespace my_personal_csharp.Models;
 
-public static class BetterString
+public static partial class BetterString
 {
     private static readonly string mcOrMacPattern = @"(mac|mc)([^aeiouAEIOU]{1})";
     private static readonly string[] specificNames = { "dicaprio", "distefano", "lebron", "labrie" };
-    private static readonly string[] prepositions =
-        { "di", "da", "das", "do", "dos", "de", "e", "von", "van", "le", "la", "du", "des", "del", "della", "der", "al" };
+    private static readonly string[] prepositions = {
+        "di", "da", "das", "do", "dos", "de", "e", "von", "van", "le", "la", "du", "des", "del", "della", "der", "al"
+    };
 
-    private static string RemoveExtraSpaces(this string inputString) => Regex.Replace(inputString.Trim(), @"\s+", " ");
-    private static string GetOnlyNumbers(this string inputString) => Regex.Replace(inputString, "[^0-9]", "");
+    private static string RemoveExtraSpaces(this string inputString) => MyRegex().Replace(inputString.Trim(), " ");
+    private static string GetOnlyNumbers(this string inputString) => MyRegex1().Replace(inputString, "");
     
     private static bool IsPreposition(string value) => prepositions.Contains(value.ToLower());
-    private static bool StartsWithOApostrophe(string value) => value.Length > 1 && new[] { "O'", "O’" }.Contains(value.Substring(0, 2).ToUpper());
+    private static bool StartsWithOApostrophe(string value)
+    {
+        string twoFirst = value[..2].ToUpper();
+        string[] twoO = { "O'", "O’" };
+        return value.Length > 1 && twoO.Contains(twoFirst);
+    }
+    
     private static bool IsOneOFSpecificNames(string value) => specificNames.Contains(value.ToLower());
-    private static bool StartsWithMcOrMac(string value, int min) =>
-        value.Length > min && Regex.IsMatch(value.Substring(0, min).ToLower(), mcOrMacPattern);
+    private static bool StartsWithMcOrMac(string value, int min)
+    {
+        if (value.Length <= min)
+            return false;
+        
+        string valueLower = value[..min].ToLower();
+        return Regex.IsMatch(valueLower, mcOrMacPattern);
+    }
 
     private static string GetFormattedName(string item, int index)
     {
@@ -24,15 +37,30 @@ public static class BetterString
             return item.ToLower();
         
         if (StartsWithOApostrophe(item))
-            return item.Substring(0, 3).ToUpper() + item.Substring(3).ToLower();
+            return item[..3].ToUpper() + item[3..].ToLower();
         
         if (IsOneOFSpecificNames(item) || StartsWithMcOrMac(item, 3))
-            return new string(new[] { char.ToUpper(item[0]), char.ToLower(item[1]), char.ToUpper(item[2]) }) + item.Substring(3).ToLower();
+        {
+            char zero            = char.ToUpper(item[0]);
+            char one             = char.ToLower(item[1]);
+            char two             = char.ToUpper(item[2]);
+            char[] threeAndBeyond= item[3..].ToLower().ToCharArray();
+            char[] finalArray = new[] { zero, one, two }.Concat(threeAndBeyond).ToArray();
+            return new string(finalArray);
+        }
+        
         
         if (StartsWithMcOrMac(item, 4))
-            return char.ToUpper(item[0]) + item.Substring(1, 2).ToLower() + char.ToUpper(item[3]) + item.Substring(4).ToLower();
+        {
+            char zero            = char.ToUpper(item[0]);
+            char[] oneTwo          = item[1..3].ToLower().ToCharArray();
+            char three           = char.ToUpper(item[3]);
+            char[] fourAndBeyond   = item[4..].ToLower().ToCharArray();
+            char[] finalArray = new[] { zero }.Concat(oneTwo).Concat(new[] { three }).Concat(fourAndBeyond).ToArray();
+            return new string(finalArray);
+        }
             
-        return char.ToUpper(item[0]) + item.Substring(1).ToLower();
+        return char.ToUpper(item[0]) + item[1..].ToLower();
     }
 
     public static string FormatName(this string inputValue)
@@ -50,7 +78,7 @@ public static class BetterString
         string onlyNumbers = inputValue.GetOnlyNumbers();
 
         if (onlyNumbers.Length > maxLength)
-            onlyNumbers = onlyNumbers.Substring(onlyNumbers.Length - maxLength);
+            onlyNumbers = onlyNumbers[^maxLength..];
 
         return onlyNumbers.PadLeft(maxLength, '0');
     }
@@ -78,4 +106,9 @@ public static class BetterString
 
         return formattedCnpj;
     }
+
+    [GeneratedRegex("\\s+")]
+    private static partial Regex MyRegex();
+    [GeneratedRegex("[^0-9]")]
+    private static partial Regex MyRegex1();
 }
